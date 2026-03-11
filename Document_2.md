@@ -30,10 +30,11 @@ To adapt this workflow for **many Kindle category pages at scale**:
 
 *The scraping script and logical flow were developed iteratively using an AI assistant (Antigravity/Claude/GPT-4 equivalent). Below are the high-level prompts used to construct the solution:*
 
-1. **Initial Setup & Strategy**: "I need to build an AI-assisted workflow to extract structured data from the Amazon Kindle Best Sellers - Paranormal Romance page. Because Amazon blocks standard `requests`, what is the best headless browser framework in Python to use to bypass bot detection for this task?"
-2. **Scraper Drafting (Part 1)**: "Write an asynchronous Playwright script in Python. Navigate to this specific URL: [Amazon URL]. Extract all 50 items in the grid (handle the lazy-loading scrolls). For each item, capture the Rank, Book Title, Author, Rating (extract just the float), Reviews (clean the commas and make it an int), Price (extract just the number), and Book URL. Handle missing elements gracefully with try-except blocks."
-3. **Scraper Drafting (Part 2)**: "Now extend the script. For every URL collected from Part 1, navigate to the individual product page. We need this to run fast, so refactor the loop to use `asyncio.gather` to scrape pages concurrently in batches of 5. Implement a random delay of 2-4 seconds per tab to avoid rate limits. Extract the Book Description, Publisher, and Publication Date."
-4. **Data Cleaning & Output**: "Use Pandas to take the combined dictionary, ensure the columns are in specific order (Rank, Title, Author, Rating, Reviews, Price, URL, Description, Publisher, Publication Date), and export them natively to an `.xlsx` file wrapper with auto-adjusting widths instead of a standard CSV."
+1. "check the image attached over here for me the main problem now is that it is overlapping in the csv format which we have , and then we have to manually adjust the columns to read them fully"
+2. "the publication dates , rank and reviews are not coming in the csv file now although it is given their in the website so the scrapping is not fully proper in there fix it now"
+3. "check the image over here for me make it like a box over there for me in it , like a box where prompts are made and not fully extending from one end to another"
+4. "can we make the scrapping process faster , very fast like going to individual pages and doing it over there for me ?"
+5. "also tell me now is there any fact like to scrape only 20 books in the code , is there any hardcoded value like that ?"
 
 ---
 
