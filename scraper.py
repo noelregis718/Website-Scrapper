@@ -240,13 +240,33 @@ async def run_scraper(target_url, max_items=20):
         print(f"Fetching details for the top {len(books_to_process)} books...")
 
         all_book_data = []
+        
+        # Helper function to scrape a single book in its own new tab
+        async def scrape_wrapper(book):
+            # Create a brand new tab for this specific book to run concurrently
+            new_page = await context.new_page()
+            try:
+                details = await extract_book_details(new_page, book['URL'])
+                return {**book, **details}
+            finally:
+                await new_page.close()
+                
 
-        for book in books_to_process:
-            details = await extract_book_details(page, book['URL'])
-            combined = {**book, **details}
-            all_book_data.append(combined)
+        # Run extraction in concurrent batches of 5 to avoid overwhelming Amazon or local RAM
+        batch_size = 5
+        for i in range(0, len(books_to_process), batch_size):
+            batch = books_to_process[i:i + batch_size]
+            print(f"Scraping batch {i//batch_size + 1} of {-(len(books_to_process)//-batch_size)}...")
+            
+            # Run the batch concurrently
+            tasks = [scrape_wrapper(book) for book in batch]
+            results = await asyncio.gather(*tasks)
+            all_book_data.extend(results)
+            
+            # Tiny sleep between batches to help avoid rate limits
+            await asyncio.sleep(1.0)
 
-        print("Finished scraping individual pages.")
+        print("Finished scraping all individual pages concurrently.")
 
         df = pd.DataFrame(all_book_data)
         cols = ['Rank', 'Title', 'Author', 'Rating', 'Reviews', 'Price', 'URL', 'Description', 'Publisher', 'Publication Date']
