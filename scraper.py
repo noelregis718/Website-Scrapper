@@ -223,7 +223,8 @@ async def run_scraper(target_url, max_items=20):
              await browser.close()
              return None
 
-        for _ in range(3):
+        # Scroll down more times to ensure the lazy-loaded items (up to 50) appear
+        for _ in range(8):
             await page.keyboard.press('PageDown')
             await asyncio.sleep(1.0)
 
